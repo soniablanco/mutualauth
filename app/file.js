@@ -1,1 +1,3 @@
-alert('hola')
+function test(){
+    alert('hola')
+}
