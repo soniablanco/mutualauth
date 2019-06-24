@@ -6,3 +6,20 @@ docker run -it -v $(pwd):/export frapsoft/openssl genrsa -out /export/server-key
 docker run -it -v $(pwd):/export frapsoft/openssl req -new -config /export/server.cnf -key /export/server-key.pem -out /export/server-csr.pem
 docker run -it -v $(pwd):/export frapsoft/openssl x509 -req -extfile /export/server.cnf -days 999 -passin "pass:password" -in /export/server-csr.pem -CA /export/ca-crt.pem -CAkey /export/ca-key.pem -CAcreateserial -out /export/server-crt.pem
 
+
+
+docker run -it -v $(pwd):/export frapsoft/openssl genrsa -out /export/client1-key.pem 4096
+docker run -it -v $(pwd):/export frapsoft/openssl genrsa -out /export/client2-key.pem 4096
+
+docker run -it -v $(pwd):/export frapsoft/openssl req -new -config /export/client1.cnf -key /export/client1-key.pem -out /export/client1-csr.pem
+docker run -it -v $(pwd):/export frapsoft/openssl req -new -config /export/client2.cnf -key /export/client2-key.pem -out /export/client2-csr.pem
+
+
+docker run -it -v $(pwd):/export frapsoft/openssl x509 -req -extfile /export/client1.cnf -days 999 -passin "pass:password" -in /export/client1-csr.pem -CA /export/ca-crt.pem -CAkey /export/ca-key.pem -CAcreateserial -out /export/client1-crt.pem
+docker run -it -v $(pwd):/export frapsoft/openssl x509 -req -extfile /export/client2.cnf -days 999 -passin "pass:password" -in /export/client2-csr.pem -CA /export/ca-crt.pem -CAkey /export/ca-key.pem -CAcreateserial -out /export/client2-crt.pem
+
+
+docker run -it -v $(pwd):/export frapsoft/openssl verify -CAfile /export/ca-crt.pem /export/client1-crt.pem
+docker run -it -v $(pwd):/export frapsoft/openssl verify -CAfile /export/ca-crt.pem /export/client2-crt.pem
+
+docker run -it -v $(pwd):/export frapsoft/openssl pkcs12 -export -in /export/client1-crt.pem -inkey /export/client1-key.pem -out /export/client1.p12
