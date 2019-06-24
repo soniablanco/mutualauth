@@ -11,11 +11,21 @@ var options = {
 }; 
 https.createServer(options, function (req, res) { 
   
+
+
   console.log(__dirname)
   console.log(new Date()+' '+ 
   req.connection.remoteAddress+' '+ 
   req.socket.getPeerCertificate().subject.CN+' '+ 
   req.method+' '+req.url); 
+
+
+  if (req.url==='/json'){
+    res.setHeader('Content-Type', 'application/json');
+    res.end(JSON.stringify({ value: "my value" }));
+    return;
+  }
+
   const parsedUrl = url.parse(req.url);
   // extract URL path
   let pathname = path.join(__dirname, req.url)
@@ -36,6 +46,8 @@ https.createServer(options, function (req, res) {
     '.pdf': 'application/pdf',
     '.doc': 'application/msword'
   };
+
+
   fs.exists(pathname, function (exist) {
     if(!exist) {
       // if the file is not found, return 404
