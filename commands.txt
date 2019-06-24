@@ -1,0 +1,8 @@
+https://engineering.circle.com/https-authorized-certs-with-node-js-315e548354a2
+
+docker run -it -v $(pwd):/export frapsoft/openssl req -nodes -new -newkey rsa:2048 -sha256 -out /export/cert.pem
+docker run -it -v $(pwd):/export frapsoft/openssl req -new -x509 -days 9999 -config /export/ca.cnf -keyout /export/ca-key.pem -out /export/ca-crt.pem
+docker run -it -v $(pwd):/export frapsoft/openssl genrsa -out /export/server-key.pem 4096
+docker run -it -v $(pwd):/export frapsoft/openssl req -new -config /export/server.cnf -key /export/server-key.pem -out /export/server-csr.pem
+docker run -it -v $(pwd):/export frapsoft/openssl x509 -req -extfile /export/server.cnf -days 999 -passin "pass:password" -in /export/server-csr.pem -CA /export/ca-crt.pem -CAkey /export/ca-key.pem -CAcreateserial -out /export/server-crt.pem
+
